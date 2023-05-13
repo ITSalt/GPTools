@@ -26,51 +26,45 @@ function splitText() {
     }
 
     if (blocks.length > 0) {
-      var introBlock = document.createElement("div");
-      introBlock.classList.add("block");
-
-      var introHeader = document.createElement("div");
-      introHeader.classList.add("block-header");
-      var introHeaderText = document.createElement("div");
-      introHeaderText.classList.add("block-header-text");
-      introHeaderText.innerText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части. После того, как я передам все части текста, собери воедино все части и напиши основные мысли, которые изложены в переданном тексте. Выдели главную. Предложи материалы с реальными ссылками, которые можно почитать на тему из текста";
-      introHeader.appendChild(introHeaderText);
-      introBlock.appendChild(introHeader);
-
+      var introBlock = createBlock("Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.");
       output.appendChild(introBlock);
     }
 
     for (var j = 0; j < blocks.length; j++) {
-      var block = document.createElement("div");
-      block.classList.add("block");
-
-      var header = document.createElement("div");
-      header.classList.add("block-header");
-      var headerText = document.createElement("div");
-      headerText.classList.add("block-header-text");
-      headerText.innerText = "Часть номер " + (j + 1);
-      header.appendChild(headerText);
-      block.appendChild(header);
-
-      var content = document.createElement("div");
-      content.innerText = blocks[j];
-      block.appendChild(content);
-
-      var copyButton = document.createElement("button");
-      copyButton.innerText = "Скопировать в буфер обмена";
-      copyButton.onclick = (function(text) {
-        return function() {
-          copyToClipboard(text);
-        };
-      })(blocks[j]);
-      header.appendChild(copyButton);
-
+      var blockText = "Часть номер " + (j + 1) + "\n" + blocks[j];
+      var block = createBlock(blockText);
       output.appendChild(block);
     }
 
     var totalChars = input.replace(/\s/g, "").length;
     charCount.innerText = "Общее количество символов: " + totalChars;
   }
+}
+
+function createBlock(text) {
+  var block = document.createElement("div");
+  block.classList.add("block");
+
+  var header = document.createElement("div");
+  header.classList.add("block-header");
+  var headerText = document.createElement("div");
+  headerText.classList.add("block-header-text");
+  headerText.innerText = text;
+  header.appendChild(headerText);
+  block.appendChild(header);
+
+  var content = document.createElement("div");
+  content.innerText = text;
+  block.appendChild(content);
+
+  var copyButton = document.createElement("button");
+  copyButton.innerText = "Скопировать в буфер обмена";
+  copyButton.onclick = function() {
+    copyToClipboard(text);
+  };
+  header.appendChild(copyButton);
+
+  return block;
 }
 
 function copyToClipboard(text) {
@@ -87,4 +81,7 @@ function clearText() {
   document.getElementById("input-text").value = "";
   document.getElementById("output").innerHTML = "";
   document.getElementById("char-count").innerHTML = "";
+  var outroText = "Весь текст передан. Теперь задание для тебя: основываясь на прочитанном тексте, выдели главную мысль и предложи материалы с реальными ссылками, которые можно почитать на эту тему.";
+  var outroBlock = createBlock(outroText);
+  document.getElementById("output").appendChild(outroBlock);
 }
