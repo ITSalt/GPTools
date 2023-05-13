@@ -33,7 +33,7 @@ function splitText() {
       introHeader.classList.add("block-header");
       var introHeaderText = document.createElement("div");
       introHeaderText.classList.add("block-header-text");
-      introHeaderText.innerText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.
+      introHeaderText.innerText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части. После того, как я передам все части текста, собери воедино все части и напиши основные мысли, которые изложены в переданном тексте. Выдели главную. Предложи материалы с реальными ссылками, которые можно почитать на тему из текста";
       introHeader.appendChild(introHeaderText);
       introBlock.appendChild(introHeader);
 
@@ -50,17 +50,20 @@ function splitText() {
       headerText.classList.add("block-header-text");
       headerText.innerText = "Часть номер " + (j + 1);
       header.appendChild(headerText);
-      var copyButton = document.createElement("button");
-      copyButton.innerText = "Скопировать в буфер обмена";
-      copyButton.onclick = function() {
-        copyToClipboard(blocks[j]);
-      };
-      header.appendChild(copyButton);
       block.appendChild(header);
 
       var content = document.createElement("div");
       content.innerText = blocks[j];
       block.appendChild(content);
+
+      var copyButton = document.createElement("button");
+      copyButton.innerText = "Скопировать в буфер обмена";
+      copyButton.onclick = (function(text) {
+        return function() {
+          copyToClipboard(text);
+        };
+      })(blocks[j]);
+      header.appendChild(copyButton);
 
       output.appendChild(block);
     }
