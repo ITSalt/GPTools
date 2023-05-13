@@ -57,28 +57,40 @@ This file writed with ChatGPT 3.5 Query:
       output.innerHTML = "";
 
       if (sentences) {
+        var blocks = [];
+        var currentBlock = "";
+        var blockIndex = 1;
+
         for (var i = 0; i < sentences.length; i++) {
+          if (currentBlock.length + sentences[i].length <= blockSize) {
+            currentBlock += sentences[i];
+          } else {
+            blocks.push(currentBlock);
+            currentBlock = sentences[i];
+          }
+        }
+
+        if (currentBlock.length > 0) {
+          blocks.push(currentBlock);
+        }
+
+        for (var j = 0; j < blocks.length; j++) {
           var block = document.createElement("div");
           block.classList.add("block");
 
           var header = document.createElement("div");
           header.classList.add("block-header");
-          header.innerText = "Вот часть номер " + (i + 1);
+          header.innerText = "Вот часть номер " + (blockIndex++);
           block.appendChild(header);
 
-          var text = sentences[i];
-          if (text.length > blockSize) {
-            text = text.substr(0, blockSize);
-          }
-
           var content = document.createElement("div");
-          content.innerText = text;
+          content.innerText = blocks[j];
           block.appendChild(content);
 
           var copyButton = document.createElement("button");
           copyButton.innerText = "Скопировать в буфер обмена";
           copyButton.onclick = function() {
-            copyToClipboard(text);
+                      copyToClipboard(blocks[j]);
           };
           block.appendChild(copyButton);
 
@@ -104,3 +116,4 @@ This file writed with ChatGPT 3.5 Query:
   </script>
 </body>
 </html>
+
