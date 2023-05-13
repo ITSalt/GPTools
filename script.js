@@ -9,7 +9,8 @@ function splitText() {
 
     displayBlocks(blocks, contentType);
   } else if (contentType === "code") {
-    var codeBlocks = splitCodeIntoBlocks(input);
+    var blockSize = parseInt(document.getElementById("block-size-input").value);
+    var codeBlocks = splitCodeIntoBlocks(input, blockSize);
     displayBlocks(codeBlocks, contentType);
   }
 }
@@ -43,7 +44,7 @@ function splitIntoBlocks(sentences, blockSize) {
   return blocks;
 }
 
-function splitCodeIntoBlocks(code) {
+function splitCodeIntoBlocks(code, blockSize) {
   var codeBlocks = [];
   var lines = code.split("\n");
   var currentBlock = "";
