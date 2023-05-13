@@ -1,49 +1,95 @@
 function splitText() {
   var input = document.getElementById("input-text").value;
-  var blockSize = parseInt(document.getElementById("block-size-input").value);
-  var sentences = input.match(/[^\.!\?]+[\.!\?]+/g);
-  var output = document.getElementById("output");
-  var charCount = document.getElementById("char-count");
-  output.innerHTML = "";
-  charCount.innerHTML = "";
+  var contentType = getContentType();
 
-  if (sentences) {
-    var blocks = [];
-    var currentBlock = "";
-    var blockIndex = 1;
+  if (contentType === "text") {
+    var blockSize = parseInt(document.getElementById("block-size-input").value);
+    var sentences = input.match(/[^\.!\?]+[\.!\?]+/g);
+    var blocks = splitIntoBlocks(sentences, blockSize);
 
-    for (var i = 0; i < sentences.length; i++) {
-      if (currentBlock.length + sentences[i].length <= blockSize) {
-        currentBlock += sentences[i];
-      } else {
-        blocks.push(currentBlock);
-        currentBlock = sentences[i];
-      }
-    }
-
-    if (currentBlock.length > 0) {
-      blocks.push(currentBlock);
-    }
-
-    if (blocks.length > 0) {
-      var introText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.";
-      var introBlock = createBlock(introText);
-      output.appendChild(introBlock);
-    }
-
-    for (var j = 0; j < blocks.length; j++) {
-      var blockText = "Часть номер " + (j + 1) + "\n" + blocks[j];
-      var block = createBlock(blockText);
-      output.appendChild(block);
-    }
-
-    var outroText = "Весь текст передан. Теперь задание для тебя: основываясь на прочитанном тексте, выдели главную мысль и предложи материалы с реальными ссылками, которые можно почитать на эту тему.";
-    var outroBlock = createBlock(outroText);
-    output.appendChild(outroBlock);
-
-    var totalChars = input.replace(/\s/g, "").length;
-    charCount.innerText = "Общее количество символов: " + totalChars;
+    displayBlocks(blocks, contentType);
+  } else if (contentType === "code") {
+    var codeBlocks = splitCodeIntoBlocks(input);
+    displayBlocks(codeBlocks, contentType);
   }
+}
+
+function getContentType() {
+  var textTypeRadio = document.getElementById("text-type");
+  if (textTypeRadio.checked) {
+    return "text";
+  } else {
+    return "code";
+  }
+}
+
+function splitIntoBlocks(sentences, blockSize) {
+  var blocks = [];
+  var currentBlock = "";
+
+  for (var i = 0; i < sentences.length; i++) {
+    if (currentBlock.length + sentences[i].length <= blockSize) {
+      currentBlock += sentences[i];
+    } else {
+      blocks.push(currentBlock);
+      currentBlock = sentences[i];
+    }
+  }
+
+  if (currentBlock.length > 0) {
+    blocks.push(currentBlock);
+  }
+
+  return blocks;
+}
+
+function splitCodeIntoBlocks(code) {
+  var codeBlocks = [];
+  var lines = code.split("\n");
+  var currentBlock = "";
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+
+    if (currentBlock.length + line.length <= blockSize) {
+      currentBlock += line + "\n";
+    } else {
+      codeBlocks.push(currentBlock);
+      currentBlock = line + "\n";
+    }
+  }
+
+  if (currentBlock.length > 0) {
+    codeBlocks.push(currentBlock);
+  }
+
+  return codeBlocks;
+}
+
+function displayBlocks(blocks, contentType) {
+  var output = document.getElementById("output");
+  output.innerHTML = "";
+
+  if (blocks.length > 0) {
+    var introText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.";
+    var introBlock = createBlock(introText);
+    output.appendChild(introBlock);
+  }
+
+  for (var j = 0; j < blocks.length; j++) {
+    var blockText = "Часть номер " + (j + 1) + "\n" + blocks[j];
+    var block = createBlock(blockText);
+    output.appendChild(block);
+  }
+
+  var outroText = "";
+  if (contentType === "text") {
+    outroText = "Весь текст передан. Теперь задание для тебя: основываясь на прочитанном тексте, выдели главную мысль и предложи материалы с реальными ссылками, которые можно почитать на эту тему.";
+  } else if (contentType === "code") {
+    outroText = "Весь код передан. Теперь задание для тебя: объедини код в один блок и сделай рефакторинг данного кода с учетом современных требований.";
+  }
+  var outroBlock = createBlock(outroText);
+  output.appendChild(outroBlock);
 }
 
 function createBlock(text) {
