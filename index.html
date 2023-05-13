@@ -1,36 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Splitter</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Разделение текста на блоки</h2>
-    <div class="form-group">
-      <label for="input-text">Введите текст:</label>
-      <textarea id="input-text" placeholder="Введите текст"></textarea>
-    </div>
-    <div>
-      <label>
-        <input type="radio" name="content-type" id="text-type" checked>
-        Текст/статья
-      </label>
-      <label>
-        <input type="radio" name="content-type" id="code-type">
-        Программный код
-      </label>
-    </div>
-    <div class="form-group">
-      <label for="block-size-input">Количество символов:</label>
+  <header>
+    <h1>Code Splitter</h1>
+    <p>Разделите ваш текст или код на блоки</p>
+  </header>
+  <main>
+    <div id="input-section">
+      <label for="input-text">Введите текст или код:</label>
+      <textarea id="input-text" rows="10"></textarea>
+      <div id="input-options">
+        <div>
+          <input type="radio" id="content-type-text" name="content-type" value="text" checked>
+          <label for="content-type-text">Текст/Статья</label>
+        </div>
+        <div>
+          <input type="radio" id="content-type-code" name="content-type" value="code">
+          <label for="content-type-code">Программный код</label>
+        </div>
+      </div>
+      <label for="block-size-input">Размер блока:</label>
       <input type="number" id="block-size-input" min="1" value="10000">
+      <button onclick="splitText()">Разделить</button>
+      <button onclick="clearOutput()">Очистить</button>
     </div>
-    <button onclick="splitText()" class="button-primary">Разделить текст</button>
-    <button onclick="clearText()" class="button">Очистить</button>
     <div id="output"></div>
-    <div id="char-count"></div>
-  </div>
-
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
