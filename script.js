@@ -16,12 +16,14 @@ function splitText() {
 }
 
 function getContentType() {
-  var textTypeRadio = document.getElementById("text-type");
-  if (textTypeRadio.checked) {
+  const textRadio = document.getElementById("content-type-text");
+  const codeRadio = document.getElementById("content-type-code");
+  if (textRadio.checked) {
     return "text";
-  } else {
+  } else if (codeRadio.checked) {
     return "code";
   }
+  return null;
 }
 
 function splitIntoBlocks(sentences, blockSize) {
