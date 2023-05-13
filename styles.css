@@ -5,7 +5,18 @@
 }
 
 .block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
+}
+
+.block-header-text {
+  font-weight: bold;
+}
+
+.block-header button {
+  margin-left: 10px;
 }
 
 #input-text {
