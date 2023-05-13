@@ -1,0 +1,106 @@
+<!-- 
+This file writed with ChatGPT 3.5 Query:
+Привет! Напиши html-файл с аккуратной версткой, которая будет работать и на компьютерах, и на смартфонах. Используй picocss для этого. Страница должна запросить у пользователя текст, по нажатию на кнопку с помощью javascript должна разделить текст на блоки, длиной не более 3800 символов. При этом, разделение должно происходить не по символам текста, а по предложениям - текст не должен прерываться посередине слова,  а должен заканчиваться в конце предложения. Соответственно, меньше 3800 текст может быть, а больше 3800 не может быть. Количество символов (3800) должно быть доступно для настройки пользователем в отдельном поле, по-умолчанию должно стоять значение 3800. 
+Каждый блок текста должен выводиться в отдельном блоке с кнопкой "скопировать в буфер обмена". В начале каждого разделённого блока должна быть фраза "Вот часть номер Х", где вместо Х - порядковый номер блока, начиная с 1.
+Так же, должна быть кнопка "Очистить", которая очистит поле для ввода текста и полученные результаты.
+
+--!>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picocss/dist/pico.min.css">
+  <style>
+    .block {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+    }
+
+    .block-header {
+      margin-bottom: 10px;
+    }
+
+    #input-text {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+    }
+
+    #block-size-input {
+      width: 60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Разделение текста на блоки</h2>
+    <div class="form-group">
+      <label for="input-text">Введите текст:</label>
+      <textarea id="input-text" placeholder="Введите текст"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="block-size-input">Количество символов:</label>
+      <input type="number" id="block-size-input" min="1" value="3800">
+    </div>
+    <button onclick="splitText()" class="button-primary">Разделить текст</button>
+    <button onclick="clearText()" class="button">Очистить</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    function splitText() {
+      var input = document.getElementById("input-text").value;
+      var blockSize = parseInt(document.getElementById("block-size-input").value);
+      var sentences = input.match(/[^\.!\?]+[\.!\?]+/g);
+      var output = document.getElementById("output");
+      output.innerHTML = "";
+
+      if (sentences) {
+        for (var i = 0; i < sentences.length; i++) {
+          var block = document.createElement("div");
+          block.classList.add("block");
+
+          var header = document.createElement("div");
+          header.classList.add("block-header");
+          header.innerText = "Вот часть номер " + (i + 1);
+          block.appendChild(header);
+
+          var text = sentences[i];
+          if (text.length > blockSize) {
+            text = text.substr(0, blockSize);
+          }
+
+          var content = document.createElement("div");
+          content.innerText = text;
+          block.appendChild(content);
+
+          var copyButton = document.createElement("button");
+          copyButton.innerText = "Скопировать в буфер обмена";
+          copyButton.onclick = function() {
+            copyToClipboard(text);
+          };
+          block.appendChild(copyButton);
+
+          output.appendChild(block);
+        }
+      }
+    }
+
+    function copyToClipboard(text) {
+      var textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      alert("Текст скопирован в буфер обмена!");
+    }
+
+    function clearText() {
+      document.getElementById("input-text").value = "";
+      document.getElementById("output").innerHTML = "";
+    }
+  </script>
+</body>
+</html>
