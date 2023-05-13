@@ -66,6 +66,21 @@ function splitCodeIntoBlocks(code) {
   return codeBlocks;
 }
 
+function createBlock(text) {
+  var block = document.createElement("div");
+  block.classList.add("block");
+  
+  var content = document.createElement("div");
+  content.classList.add("block-content");
+  content.textContent = text;
+  block.appendChild(content);
+
+  var copyButton = createCopyButton(text);
+  block.appendChild(copyButton);
+  
+  return block;
+}
+
 function displayBlocks(blocks, contentType) {
   var output = document.getElementById("output");
   output.innerHTML = "";
@@ -92,30 +107,6 @@ function displayBlocks(blocks, contentType) {
   output.appendChild(outroBlock);
 }
 
-function createBlock(text) {
-  var block = document.createElement("div");
-  block.classList.add("block");
-
-  var header = document.createElement("div");
-  header.classList.add("block-header");
-  var headerText = document.createElement("div");
-  headerText.classList.add("block-header-text");
-  headerText.innerText = text;
-  header.appendChild(headerText);
-  var copyButton = document.createElement("button");
-  copyButton.innerText = "Скопировать в буфер обмена";
-  copyButton.onclick = function() {
-    copyToClipboard(text);
-  };
-  header.appendChild(copyButton);
-  block.appendChild(header);
-
-  var content = document.createElement("div");
-  content.innerText = text;
-  block.appendChild(content);
-
-  return block;
-}
 
 function copyToClipboard(text) {
   var textarea = document.createElement("textarea");
