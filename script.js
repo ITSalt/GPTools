@@ -76,7 +76,12 @@ function createBlock(text) {
   content.textContent = text;
   block.appendChild(content);
 
-  var copyButton = createCopyButton(text);
+  var copyButton = document.createElement("button");
+  copyButton.classList.add("copy-button");
+  copyButton.textContent = "Копировать в буфер";
+  copyButton.addEventListener("click", function() {
+    copyToClipboard(text);
+  });
   block.appendChild(copyButton);
   
   return block;
