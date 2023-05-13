@@ -26,7 +26,8 @@ function splitText() {
     }
 
     if (blocks.length > 0) {
-      var introBlock = createBlock("Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.");
+      var introText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.";
+      var introBlock = createBlock(introText);
       output.appendChild(introBlock);
     }
 
@@ -35,6 +36,10 @@ function splitText() {
       var block = createBlock(blockText);
       output.appendChild(block);
     }
+
+    var outroText = "Весь текст передан. Теперь задание для тебя: основываясь на прочитанном тексте, выдели главную мысль и предложи материалы с реальными ссылками, которые можно почитать на эту тему.";
+    var outroBlock = createBlock(outroText);
+    output.appendChild(outroBlock);
 
     var totalChars = input.replace(/\s/g, "").length;
     charCount.innerText = "Общее количество символов: " + totalChars;
@@ -51,18 +56,17 @@ function createBlock(text) {
   headerText.classList.add("block-header-text");
   headerText.innerText = text;
   header.appendChild(headerText);
-  block.appendChild(header);
-
-  var content = document.createElement("div");
-  content.innerText = text;
-  block.appendChild(content);
-
   var copyButton = document.createElement("button");
   copyButton.innerText = "Скопировать в буфер обмена";
   copyButton.onclick = function() {
     copyToClipboard(text);
   };
   header.appendChild(copyButton);
+  block.appendChild(header);
+
+  var content = document.createElement("div");
+  content.innerText = text;
+  block.appendChild(content);
 
   return block;
 }
@@ -81,7 +85,4 @@ function clearText() {
   document.getElementById("input-text").value = "";
   document.getElementById("output").innerHTML = "";
   document.getElementById("char-count").innerHTML = "";
-  var outroText = "Весь текст передан. Теперь задание для тебя: основываясь на прочитанном тексте, выдели главную мысль и предложи материалы с реальными ссылками, которые можно почитать на эту тему.";
-  var outroBlock = createBlock(outroText);
-  document.getElementById("output").appendChild(outroBlock);
 }
