@@ -46,17 +46,29 @@ function splitIntoBlocks(sentences, blockSize) {
 
 function splitCodeIntoBlocks(code, blockSize) {
   var codeBlocks = [];
-  var lines = code.split("\n");
   var currentBlock = "";
+  var currentLineIsFunction = false;
 
+  var lines = code.split("\n");
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
+    var trimmedLine = line.trim();
 
-    if (currentBlock.length + line.length <= blockSize) {
-      currentBlock += line + "\n";
-    } else {
+    if (trimmedLine.startsWith("function") || trimmedLine.startsWith("class")) {
+      if (currentBlock.length > 0) {
+        codeBlocks.push(currentBlock);
+        currentBlock = "";
+      }
+      currentLineIsFunction = true;
+    }
+
+    currentBlock += line + "\n";
+
+    if (trimmedLine.endsWith("{")) {
+      currentLineIsFunction = false;
+    } else if (currentBlock.length > blockSize && !currentLineIsFunction) {
       codeBlocks.push(currentBlock);
-      currentBlock = line + "\n";
+      currentBlock = "";
     }
   }
 
@@ -66,6 +78,7 @@ function splitCodeIntoBlocks(code, blockSize) {
 
   return codeBlocks;
 }
+
 
 function createBlock(text) {
   var block = document.createElement("div");
@@ -92,7 +105,14 @@ function displayBlocks(blocks, contentType) {
   output.innerHTML = "";
 
   if (blocks.length > 0) {
-    var introText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части.";
+    
+    var introText = "";
+    if (contentType === "text") {
+      introText = "Мой текст превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью общего текста, в начале будет указан номер части. Принимай от меня части текста, пока я не напишу фразу 'Весь текст передан.' После этой фразы я напишу, что надо будет сделать с полученным текстом. А теперь готовься принимать части текста.";
+    }
+    else if (contentType === "code") {
+      introText = "Код моей программы превышает ограничение по количеству символов, которое можно вставить в одно сообщение, поэтому я разделю его на " + blocks.length + " сообщений. Каждое следующее сообщение будет частью кода, в начале будет указан номер части. Принимай от меня части кода, пока я не напишу фразу 'Весь код передан.' После этой фразы я напишу, что надо будет сделать с полученным кодом. А теперь готовься принимать части кода.";
+    }
     var introBlock = createBlock(introText);
     output.appendChild(introBlock);
   }
