@@ -11,6 +11,8 @@ header {
   color: #fff;
   padding: 10px 20px;
   height: 40px;
+  display: flex;
+  align-items: center;
 }
 
 .logo img {
@@ -19,9 +21,7 @@ header {
 }
 
 .header-content {
-  display: inline-block;
-  margin-left: 10px;
-  vertical-align: middle;
+  margin-left: auto;
 }
 
 h1 {
@@ -93,7 +93,7 @@ button:hover {
 }
 
 footer {
-  background-color: #333;
+  background-color: #0078d7;
   color: #fff;
   padding: 20px;
   text-align: center;
@@ -114,11 +114,6 @@ footer {
 
 .intro-text {
   flex: 1;
-}
-
-.intro-image img {
-  max-width: 100%;
-  height: auto;
 }
 
 .intro-text h2 {
