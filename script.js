@@ -46,27 +46,23 @@ function splitIntoBlocks(sentences, blockSize) {
 
 function splitCodeIntoBlocks(code, blockSize) {
   var codeBlocks = [];
-  var currentBlock = "";
-  var currentLineIsFunction = false;
-
   var lines = code.split("\n");
+  var currentBlock = "";
+  var bracesCount = 0;
+
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
-    var trimmedLine = line.trim();
-
-    if (trimmedLine.startsWith("function") || trimmedLine.startsWith("class")) {
-      if (currentBlock.length > 0) {
-        codeBlocks.push(currentBlock);
-        currentBlock = "";
-      }
-      currentLineIsFunction = true;
-    }
-
     currentBlock += line + "\n";
 
-    if (trimmedLine.endsWith("{")) {
-      currentLineIsFunction = false;
-    } else if (currentBlock.length > blockSize && !currentLineIsFunction) {
+    // Подсчет открывающих и закрывающих фигурных скобок
+    var openingBraces = (line.match(/{/g) || []).length;
+    var closingBraces = (line.match(/}/g) || []).length;
+
+    bracesCount += openingBraces - closingBraces;
+
+    // Если количество открывающих и закрывающих фигурных скобок совпадает,
+    // то текущий блок содержит полное тело функции или метода класса
+    if (bracesCount === 0 && currentBlock.length > blockSize) {
       codeBlocks.push(currentBlock);
       currentBlock = "";
     }
@@ -78,7 +74,6 @@ function splitCodeIntoBlocks(code, blockSize) {
 
   return codeBlocks;
 }
-
 
 function createBlock(text) {
   var block = document.createElement("div");
