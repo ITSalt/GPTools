@@ -48,23 +48,29 @@ function splitCodeIntoBlocks(code, blockSize) {
   var codeBlocks = [];
   var lines = code.split("\n");
   var currentBlock = "";
-  var bracesCount = 0;
 
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
     currentBlock += line + "\n";
 
-    // Подсчет открывающих и закрывающих фигурных скобок
-    var openingBraces = (line.match(/{/g) || []).length;
-    var closingBraces = (line.match(/}/g) || []).length;
+    // Проверяем, является ли текущая строка началом функции или метода
+    var isFunctionStart = isFunctionOrMethodStart(line);
 
-    bracesCount += openingBraces - closingBraces;
+    // Проверяем, является ли текущая строка концом функции или метода
+    var isFunctionEnd = isFunctionOrMethodEnd(line);
 
-    // Если количество открывающих и закрывающих фигурных скобок совпадает,
-    // то текущий блок содержит полное тело функции или метода класса
-    if (bracesCount === 0 && currentBlock.length > blockSize) {
+    // Если текущая строка является началом функции или метода,
+    // то начинаем новый блок
+    if (isFunctionStart) {
+      currentBlock = line + "\n";
+    }
+
+    // Если текущая строка является концом функции или метода,
+    // и текущий блок превышает размер blockSize,
+    // то добавляем текущий блок в массив блоков и начинаем новый блок
+    if (isFunctionEnd && currentBlock.length > blockSize) {
       codeBlocks.push(currentBlock);
-      currentBlock = "";
+      currentBlock = line + "\n";
     }
   }
 
@@ -74,6 +80,28 @@ function splitCodeIntoBlocks(code, blockSize) {
 
   return codeBlocks;
 }
+
+function isFunctionOrMethodStart(line) {
+  // Проверяем, является ли строка началом функции или метода
+  var trimmedLine = line.trim();
+  return (
+    trimmedLine.startsWith("function") ||
+    trimmedLine.startsWith("class") ||
+    (trimmedLine.startsWith("const") && trimmedLine.includes("= function")) ||
+    (trimmedLine.startsWith("const") && trimmedLine.includes("= async function")) ||
+    (trimmedLine.startsWith("const") && trimmedLine.includes("= (")) ||
+    (trimmedLine.startsWith("const") && trimmedLine.includes("= async (")) ||
+    (trimmedLine.startsWith("const") && trimmedLine.includes("= () =>")) ||
+    (trimmedLine.startsWith("const") && trimmedLine.includes("= async () =>"))
+  );
+}
+
+function isFunctionOrMethodEnd(line) {
+  // Проверяем, является ли строка концом функции или метода
+  var trimmedLine = line.trim();
+  return trimmedLine.endsWith("}") || trimmedLine.endsWith("});");
+}
+
 
 function createBlock(text) {
   var block = document.createElement("div");
